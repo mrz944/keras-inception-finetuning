@@ -25,8 +25,8 @@ x = base_model.output
 x = GlobalAveragePooling2D()(x)
 # let's add a fully-connected layer
 x = Dense(1024, activation='relu')(x)
-# and a logistic layer -- let's say we have 200 classes
-predictions = Dense(1, activation='softmax')(x)
+# and a logistic layer -- let's say we have 2 classes
+predictions = Dense(2, activation='softmax')(x)
 
 # this is the model we will train
 model = Model(inputs=base_model.input, outputs=predictions)
@@ -117,7 +117,7 @@ tensorboard = TensorBoard(log_dir='./logs/fine-tuning',
 model.fit_generator(
     train_generator,
     samples_per_epoch=nb_train_samples,
-    epochs=epochs,
+    epochs=fine_tune_epochs,
     validation_data=validation_generator,
     nb_val_samples=nb_validation_samples,
     callbacks=[tensorboard])
