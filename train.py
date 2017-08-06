@@ -29,7 +29,7 @@ x = Dense(1024, activation='relu')(x)
 predictions = Dense(2, activation='softmax')(x)
 
 # this is the model we will train
-model = Model(inputs=base_model.input, outputs=predictions)
+model = Model(input=base_model.input, output=predictions)
 
 # first: train only the top layers (which were randomly initialized)
 # i.e. freeze all convolutional InceptionV3 layers
@@ -79,7 +79,7 @@ tensorboard = TensorBoard(log_dir='./logs/training',
 model.fit_generator(
     train_generator,
     samples_per_epoch=nb_train_samples,
-    epochs=train_epochs,
+    nb_epoch=train_epochs,
     validation_data=validation_generator,
     nb_val_samples=nb_validation_samples,
     callbacks=[tensorboard])
@@ -117,7 +117,7 @@ tensorboard = TensorBoard(log_dir='./logs/fine-tuning',
 model.fit_generator(
     train_generator,
     samples_per_epoch=nb_train_samples,
-    epochs=fine_tune_epochs,
+    nb_epoch=fine_tune_epochs,
     validation_data=validation_generator,
     nb_val_samples=nb_validation_samples,
     callbacks=[tensorboard])
