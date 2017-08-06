@@ -29,7 +29,7 @@ x = Dense(1024, activation='relu')(x)
 predictions = Dense(2, activation='softmax')(x)
 
 # this is the model we will train
-model = Model(input=base_model.input, output=predictions)
+model = Model(inputs=base_model.input, outputs=predictions)
 
 # first: train only the top layers (which were randomly initialized)
 # i.e. freeze all convolutional InceptionV3 layers
@@ -45,7 +45,7 @@ for layer in base_model.layers:
 #               optimizer=optimizers.SGD(lr=1e-4, momentum=0.9),
 #               metrics=['accuracy'])
 
-model.compile(loss='binary_crossentropy',
+model.compile(loss='categorical_crossentropy',
               optimizer=optimizers.RMSprop(lr=0.001),
               metrics=['accuracy'])
 
@@ -62,13 +62,15 @@ train_generator = train_datagen.flow_from_directory(
     train_data_dir,
     target_size=(img_height, img_width),
     batch_size=batch_size,
-    class_mode='binary')
+    shuffle=True,
+    class_mode='categorical')
 
 validation_generator = test_datagen.flow_from_directory(
     validation_data_dir,
     target_size=(img_height, img_width),
     batch_size=batch_size,
-    class_mode='binary')
+    shuffle=True,
+    class_mode='categorical')
 
 # train the model on the new data for a few epochs
 tensorboard = TensorBoard(log_dir='./logs/training',
@@ -79,7 +81,7 @@ tensorboard = TensorBoard(log_dir='./logs/training',
 model.fit_generator(
     train_generator,
     samples_per_epoch=nb_train_samples,
-    nb_epoch=train_epochs,
+    epochs=train_epochs,
     validation_data=validation_generator,
     nb_val_samples=nb_validation_samples,
     callbacks=[tensorboard])
@@ -103,7 +105,7 @@ for layer in model.layers[249:]:
    layer.trainable = True
 
 # we need to recompile the model for these modifications to take effect
-model.compile(loss='binary_crossentropy',
+model.compile(loss='categorical_crossentropy',
               optimizer=optimizers.RMSprop(lr=0.0001),
               metrics=['accuracy'])
 
@@ -117,7 +119,7 @@ tensorboard = TensorBoard(log_dir='./logs/fine-tuning',
 model.fit_generator(
     train_generator,
     samples_per_epoch=nb_train_samples,
-    nb_epoch=fine_tune_epochs,
+    epochs=fine_tune_epochs,
     validation_data=validation_generator,
     nb_val_samples=nb_validation_samples,
     callbacks=[tensorboard])
