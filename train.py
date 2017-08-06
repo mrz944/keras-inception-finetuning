@@ -12,8 +12,8 @@ train_data_dir = 'data/train'
 validation_data_dir = 'data/validation'
 nb_train_samples = 3064
 nb_validation_samples = 400
-train_epochs = 80
-fine_tune_epochs = 80
+train_epochs = 20
+fine_tune_epochs = 20
 batch_size = 32
 
 # create the base pre-trained model
@@ -46,7 +46,7 @@ for layer in base_model.layers:
 #               metrics=['accuracy'])
 
 model.compile(loss='binary_crossentropy',
-              optimizer=optimizers.RMSprop(lr=0.01, decay=0.00004),
+              optimizer=optimizers.RMSprop(lr=0.001),
               metrics=['accuracy'])
 
 # prepare data augmentation configuration
@@ -104,7 +104,7 @@ for layer in model.layers[249:]:
 
 # we need to recompile the model for these modifications to take effect
 model.compile(loss='binary_crossentropy',
-              optimizer=optimizers.RMSprop(lr=0.0001, decay=0.00004),
+              optimizer=optimizers.RMSprop(lr=0.0001),
               metrics=['accuracy'])
 
 # we train our model again (this time fine-tuning the top 2 inception blocks
