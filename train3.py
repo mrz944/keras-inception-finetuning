@@ -16,7 +16,7 @@ validation_directory = './data/validation'
 img_width, img_height = 299, 299
 batch_size = 16
 train_epochs = 20
-fine_tune_epochs = 40
+fine_tune_epochs = 80
 train_samples = 3064
 validation_samples = 400
 
@@ -98,7 +98,9 @@ model.compile(
 csv_logger = CSVLogger('./output/logs/training.csv', separator=';')
 
 checkpointer = ModelCheckpoint(
-    filepath='./output/checkpoints/inceptionV3_{epoch:02d}_{val_acc:.2f}.h5',
+    filepath='./output/checkpoints/inceptionV3_epoch_{epoch:02d}_acc_{val_acc:.5f}.h5',
+    monitor='val_acc',
+    mode='max',
     verbose=1,
     save_best_only=True)
 
@@ -119,9 +121,9 @@ model.fit_generator(
     verbose=1,
     callbacks=[csv_logger, checkpointer, tensorboard])
 
-model.save_weights('./output/inceptionV3_60epochs.h5')
+model.save_weights('./output/inceptionV3_100_epochs.h5')
 
 # serialize model to JSON
 model_json = model.to_json()
-with open('./output/inceptionV3_40epochs.h5', 'w') as json_file:
+with open('./output/inceptionV3_100_epochs.json', 'w') as json_file:
     json_file.write(model_json)
