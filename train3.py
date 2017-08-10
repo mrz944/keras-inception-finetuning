@@ -71,7 +71,7 @@ model.compile(
 
 # train the model on the new data for a few epochs
 tensorboard = TensorBoard(
-    log_dir='./output/logs/training',
+    log_dir='output/logs/training',
     histogram_freq=1,
     write_graph=True,
     write_images=True)
@@ -95,17 +95,17 @@ model.compile(
     optimizer=optimizers.SGD(lr=0.0001, momentum=0.9, decay=1e-5),
     metrics=['accuracy'])
 
-csv_logger = CSVLogger('./output/logs/training.csv', separator=';')
+csv_logger = CSVLogger('output/logs/training.csv', separator=';')
 
 checkpointer = ModelCheckpoint(
-    filepath='./output/checkpoints/inceptionV3_{epoch:02d}_{val_acc:.2f}.h5',
+    filepath='output/checkpoints/inceptionV3_{epoch:02d}_{val_acc:.2f}.h5',
     verbose=1,
     save_best_only=True)
 
 # early_stopper = EarlyStopping(patience=10)
 
 tensorboard = TensorBoard(
-    log_dir='./output/logs/fine_tuning',
+    log_dir='output/logs/fine_tuning',
     histogram_freq=1,
     write_graph=True,
     write_images=True)
@@ -119,9 +119,9 @@ model.fit_generator(
     verbose=1,
     callbacks=[csv_logger, checkpointer, tensorboard])
 
-model.save_weights('./output/inceptionV3_60epochs.h5')
+model.save_weights('output/inceptionV3_60epochs.h5')
 
 # serialize model to JSON
 model_json = model.to_json()
-with open('./output/inceptionV3_40epochs.h5', 'w') as json_file:
+with open('output/inceptionV3_40epochs.h5', 'w') as json_file:
     json_file.write(model_json)
