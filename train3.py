@@ -14,7 +14,7 @@ train_directory = 'data/train'
 validation_directory = 'data/validation'
 
 img_width, img_height = 299, 299
-batch_size = 32
+batch_size = 16
 train_epochs = 20
 fine_tune_epochs = 40
 train_samples = 3064
@@ -102,7 +102,7 @@ checkpointer = ModelCheckpoint(
     verbose=1,
     save_best_only=True)
 
-early_stopper = EarlyStopping(patience=10)
+# early_stopper = EarlyStopping(patience=10)
 
 tensorboard = TensorBoard(
     log_dir='./output/logs/fine_tuning',
@@ -117,7 +117,7 @@ model.fit_generator(
     validation_data=validation_generator,
     validation_steps=validation_samples // batch_size,
     verbose=1,
-    callbacks=[csv_logger, checkpointer, early_stopper, tensorboard])
+    callbacks=[csv_logger, checkpointer, tensorboard])
 
 model.save_weights('./output/inceptionV3_60epochs.h5')
 
