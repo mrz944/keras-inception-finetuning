@@ -15,7 +15,7 @@ validation_directory = 'data/validation'
 
 img_width, img_height = 299, 299
 batch_size = 32
-train_epochs = 20
+train_epochs = 60
 fine_tune_epochs = 20
 train_samples = 3064
 validation_samples = 400
@@ -66,7 +66,7 @@ for layer in base_model.layers:
 
 model.compile(
     loss='binary_crossentropy',
-    optimizer=optimizers.RMSprop(lr=0.001),
+    optimizer=optimizers.RMSprop(lr=0.01, decay=0.00004),
     metrics=['accuracy'])
 
 # train the model on the new data for a few epochs
@@ -94,7 +94,7 @@ for layer in model.layers[249:]:
 
 model.compile(
     loss='binary_crossentropy',
-    optimizer=optimizers.RMSprop(lr=0.0001),
+    optimizer=optimizers.RMSprop(lr=0.0001, decay=0.00004),
     metrics=['accuracy'])
 
 tensorboard = TensorBoard(
