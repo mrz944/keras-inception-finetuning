@@ -70,13 +70,20 @@ model.compile(
     metrics=['accuracy'])
 
 # train the model on the new data for a few epochs
+tensorboard = TensorBoard(
+    log_dir='./output/logs/training',
+    histogram_freq=1,
+    write_graph=True,
+    write_images=True)
+
 model.fit_generator(
     train_generator,
     steps_per_epoch=train_samples // batch_size,
     epochs=train_epochs,
     validation_data=validation_generator,
     validation_steps=validation_samples // batch_size,
-    verbose = 1)
+    verbose = 1,
+    callbacks=[tensorboard])
 
 for layer in model.layers[:249]:
    layer.trainable = False
@@ -98,7 +105,7 @@ checkpointer = ModelCheckpoint(
 early_stopper = EarlyStopping(patience=10)
 
 tensorboard = TensorBoard(
-    log_dir='./output/logs',
+    log_dir='./output/logs/fine_tuning',
     histogram_freq=1,
     write_graph=True,
     write_images=True)
