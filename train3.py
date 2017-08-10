@@ -1,7 +1,7 @@
 from keras import applications
 from keras.preprocessing.image import ImageDataGenerator
 from keras import optimizers
-from keras.callbacks import TensorBoard
+from keras.callbacks import CSVLogger, EarlyStopping, ModelCheckpoint, TensorBoard
 from keras.models import Model
 from keras.layers import Dense, GlobalAveragePooling2D
 
@@ -15,7 +15,7 @@ validation_directory = 'data/validation'
 
 img_width, img_height = 299, 299
 batch_size = 32
-train_epochs = 60
+train_epochs = 20
 fine_tune_epochs = 20
 train_samples = 3064
 validation_samples = 400
@@ -66,26 +66,17 @@ for layer in base_model.layers:
 
 model.compile(
     loss='binary_crossentropy',
-    optimizer=optimizers.RMSprop(lr=0.01, decay=0.00004),
+    optimizer=optimizers.RMSprop(lr=0.001),
     metrics=['accuracy'])
 
 # train the model on the new data for a few epochs
-tensorboard = TensorBoard(
-    log_dir='./logs/training',
-    histogram_freq=1,
-    write_graph=True,
-    write_images=True)
-
 model.fit_generator(
     train_generator,
     steps_per_epoch=train_samples // batch_size,
     epochs=train_epochs,
     validation_data=validation_generator,
     validation_steps=validation_samples // batch_size,
-    verbose = 1,
-    callbacks=[tensorboard])
-
-model.save_weights('seeds_split.h5')
+    verbose = 1)
 
 for layer in model.layers[:249]:
    layer.trainable = False
@@ -94,11 +85,20 @@ for layer in model.layers[249:]:
 
 model.compile(
     loss='binary_crossentropy',
-    optimizer=optimizers.RMSprop(lr=0.0001, decay=0.00004),
+    optimizer=optimizers.SGD(lr=0.0001, momentum=0.9, decay=1e-5),
     metrics=['accuracy'])
 
+csv_logger = CSVLogger('./output/logs/training.csv', separator = ';')
+
+checkpointer = ModelCheckpoint(
+    filepath='./output/checkpoints/inceptionV3_{epoch:02d}_{val_acc:.2f}.h5',
+    verbose=1,
+    save_best_only=True)
+
+early_stopper = EarlyStopping(patience=10)
+
 tensorboard = TensorBoard(
-    log_dir='./logs/fine-tuning',
+    log_dir='./output/logs',
     histogram_freq=1,
     write_graph=True,
     write_images=True)
@@ -110,6 +110,11 @@ model.fit_generator(
     validation_data=validation_generator,
     validation_steps=validation_samples // batch_size,
     verbose = 1,
-    callbacks=[tensorboard])
+    callbacks=[csv_logger, checkpointer, early_stopper, tensorboard])
 
-model.save_weights('seeds_split_fine_tuned.h5')
+model.save_weights('./output/inceptionV3_40epochs.h5')
+
+# serialize model to JSON
+model_json = model.to_json()
+with open('./output/inceptionV3_40epochs.h5', 'w') as json_file:
+    json_file.write(model_json)
