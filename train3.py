@@ -82,20 +82,20 @@ model.fit_generator(
     epochs=train_epochs,
     validation_data=validation_generator,
     validation_steps=validation_samples // batch_size,
-    verbose = 1,
+    verbose=1,
     callbacks=[tensorboard])
 
 for layer in model.layers[:249]:
-   layer.trainable = False
+    layer.trainable = False
 for layer in model.layers[249:]:
-   layer.trainable = True
+    layer.trainable = True
 
 model.compile(
     loss='binary_crossentropy',
     optimizer=optimizers.SGD(lr=0.0001, momentum=0.9, decay=1e-5),
     metrics=['accuracy'])
 
-csv_logger = CSVLogger('./output/logs/training.csv', separator = ';')
+csv_logger = CSVLogger('./output/logs/training.csv', separator=';')
 
 checkpointer = ModelCheckpoint(
     filepath='./output/checkpoints/inceptionV3_{epoch:02d}_{val_acc:.2f}.h5',
@@ -116,7 +116,7 @@ model.fit_generator(
     epochs=fine_tune_epochs,
     validation_data=validation_generator,
     validation_steps=validation_samples // batch_size,
-    verbose = 1,
+    verbose=1,
     callbacks=[csv_logger, checkpointer, early_stopper, tensorboard])
 
 model.save_weights('./output/inceptionV3_60epochs.h5')
