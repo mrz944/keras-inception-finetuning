@@ -16,7 +16,7 @@ validation_directory = 'data/validation'
 img_width, img_height = 299, 299
 batch_size = 32
 train_epochs = 20
-fine_tune_epochs = 20
+fine_tune_epochs = 40
 train_samples = 3064
 validation_samples = 400
 
@@ -112,7 +112,7 @@ model.fit_generator(
     verbose = 1,
     callbacks=[csv_logger, checkpointer, early_stopper, tensorboard])
 
-model.save_weights('./output/inceptionV3_40epochs.h5')
+model.save_weights('./output/inceptionV3_60epochs.h5')
 
 # serialize model to JSON
 model_json = model.to_json()
