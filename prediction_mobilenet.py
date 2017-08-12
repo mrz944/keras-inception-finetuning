@@ -11,7 +11,7 @@ time1 = time.time()
 
 test_directory = './data/test'
 
-img_width, img_height = 299, 299
+img_width, img_height = 224, 224
 batch_size = 1
 test_samples = 20
 
