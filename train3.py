@@ -23,7 +23,6 @@ validation_samples = 400
 # Data generators & augmentation
 
 datagen = ImageDataGenerator(
-    rescale=1./255,
     rotation_range=20,
     zoom_range=0.2,
     horizontal_flip=True)
