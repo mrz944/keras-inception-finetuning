@@ -3,7 +3,7 @@ from keras.preprocessing.image import ImageDataGenerator
 from keras import optimizers
 from keras.callbacks import CSVLogger, EarlyStopping, ModelCheckpoint, TensorBoard
 from keras.models import Model
-from keras.layers import Dense, Dropout, GlobalAveragePooling2D
+from keras.layers import Activation, Conv2D, Dense, Dropout, GlobalAveragePooling2D, Reshape
 
 # Settings
 
@@ -53,9 +53,11 @@ print('Model loaded.')
 # Custom layers
 x = base_model.output
 x = GlobalAveragePooling2D()(x)
-x = Dense(2048, activation='relu')(x)
-# x = Dropout(0.8)(x)
-predictions = Dense(2, activation='softmax')(x)
+x = Reshape((1, 1, 1024))(x)
+x = Dropout(1e-3)(x)
+x = Conv2D(2, (1, 1), padding='same')(x)
+x = Activation('softmax')(x)
+predictions = Reshape((2,))(x)
 model = Model(inputs=base_model.input, outputs=predictions)
 
 for layer in base_model.layers:
@@ -85,6 +87,9 @@ model.fit_generator(
     callbacks=[csv_logger, tensorboard])
 
 model.save_weights('./output/mobilenet_1_0_224_40_epochs.h5')
+
+for layer in model.layers:
+   layer.trainable = True
 
 model.compile(
     loss='categorical_crossentropy',
