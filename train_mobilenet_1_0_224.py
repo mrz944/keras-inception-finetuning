@@ -89,7 +89,7 @@ model.fit_generator(
 model.save_weights('./output/mobilenet_1_0_224_40_epochs.h5')
 
 for layer in model.layers:
-   layer.trainable = True
+    layer.trainable = True
 
 model.compile(
     loss='categorical_crossentropy',
