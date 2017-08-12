@@ -67,7 +67,7 @@ for layer in base_model.layers:
 
 model.compile(
     loss='categorical_crossentropy',
-    optimizer=optimizers.RMSprop(lr=0.001),
+    optimizer=optimizers.RMSprop(lr=0.001, decay=0.00004),
     metrics=['accuracy'])
 
 # train the model on the new data for a few epochs
@@ -97,7 +97,9 @@ for layer in model.layers[249:]:
 
 model.compile(
     loss='categorical_crossentropy',
-    optimizer=optimizers.RMSprop(lr=0.0001, decay=0.00004),
+    optimizer=optimizers.SGD(lr=0.0001,
+                             momentum=0.9,
+                             decay=0.00004),
     metrics=['accuracy'])
 
 csv_logger = CSVLogger('./output/logs/fine_tuning.csv', separator=';')
