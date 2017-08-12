@@ -24,6 +24,8 @@ validation_samples = 400
 
 datagen = ImageDataGenerator(
     rotation_range=20,
+    width_shift_range=0.2,
+    height_shift_range=0.2,
     horizontal_flip=True)
 
 train_generator = datagen.flow_from_directory(
