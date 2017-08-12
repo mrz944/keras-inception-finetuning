@@ -3,7 +3,7 @@ from keras.preprocessing.image import ImageDataGenerator
 from keras import optimizers
 from keras.callbacks import CSVLogger, EarlyStopping, ModelCheckpoint, TensorBoard
 from keras.models import Model
-from keras.layers import Dense, GlobalAveragePooling2D
+from keras.layers import Dense, Dropout, GlobalAveragePooling2D
 
 # based on
 # https://www.kaggle.com/ogurtsov/0-99-with-r-and-keras-inception-v3-fine-tune/code
@@ -57,7 +57,8 @@ print('Model loaded.')
 # Custom layers
 x = base_model.output
 x = GlobalAveragePooling2D()(x)
-x = Dense(1024, activation='relu')(x)
+x = Dense(2048, activation='relu')(x)
+x = Dropout(0.8)(x)
 predictions = Dense(2, activation='softmax')(x)
 model = Model(inputs=base_model.input, outputs=predictions)
 
