@@ -1,9 +1,7 @@
 import sys
-from keras.preprocessing.image import ImageDataGenerator
+from keras import applications
 from keras import optimizers
-from keras.applications.inception_v3 import InceptionV3
 from keras.preprocessing import image
-from keras.applications.inception_v3 import preprocess_input
 from keras.models import Model, load_model
 from keras.layers import Dense, GlobalAveragePooling2D
 import numpy as np
@@ -17,7 +15,7 @@ img_width, img_height = 299, 299
 batch_size = 1
 test_samples = 20
 
-datagen = ImageDataGenerator()
+datagen = image.ImageDataGenerator()
 
 test_generator = datagen.flow_from_directory(
     test_directory,
@@ -45,15 +43,17 @@ time2 = time.time()
 #     optimizer=optimizers.RMSprop(lr=0.0001, decay=0.00004),
 #     metrics=['accuracy'])
 
-model = load_model('./output/checkpoints/mobilenet_1_0_224_fine_tuned_epoch_26_acc_0.99250.h5')
+model = load_model('./output/checkpoints/mobilenet_1_0_224_fine_tuned_epoch_26_acc_0.99250.h5', custom_objects={
+                   'relu6': applications.mobilenet.relu6,
+                   'DepthwiseConv2D': applications.mobilenet.DepthwiseConv2D})
 
 time3 = time.time()
 
-score = model.evaluate_generator(test_generator, test_samples//batch_size)
+score = model.evaluate_generator(test_generator, test_samples // batch_size)
 time4 = time.time()
 print "Test fraction correct (Accuracy) = {:.2f}".format(score[1])
 
-prediction = model.predict_generator(test_generator, test_samples//batch_size)
+prediction = model.predict_generator(test_generator, test_samples // batch_size)
 time5 = time.time()
 print prediction
 
@@ -61,7 +61,7 @@ print prediction
 # img = image.load_img(img_path, target_size=(img_width, img_height))
 # x = image.img_to_array(img)
 # x = np.expand_dims(x, axis=0)
-# x = preprocess_input(x)
+# x = applications.mobilenet.MobileNet.preprocess_input(x)
 #
 # preds = model.predict(x, batch_size=1)
 #
