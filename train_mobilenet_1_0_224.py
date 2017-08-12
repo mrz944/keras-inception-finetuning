@@ -12,7 +12,7 @@ validation_directory = './data/validation'
 
 img_width, img_height = 224, 224
 batch_size = 16
-train_epochs = 40
+train_epochs = 30
 fine_tune_epochs = 60
 train_samples = 3064
 validation_samples = 400
@@ -86,16 +86,14 @@ model.fit_generator(
     verbose=1,
     callbacks=[csv_logger, tensorboard])
 
-model.save_weights('./output/mobilenet_1_0_224_40_epochs.h5')
+model.save_weights('./output/mobilenet_1_0_224_30_epochs.h5')
 
 for layer in model.layers:
     layer.trainable = True
 
 model.compile(
     loss='categorical_crossentropy',
-    optimizer=optimizers.SGD(lr=0.0001,
-                             momentum=0.9,
-                             decay=0.00004),
+    optimizer=optimizers.RMSprop(lr=0.0001, decay=0.00004),
     metrics=['accuracy'])
 
 csv_logger = CSVLogger('./output/logs/fine_tuning.csv', separator=';')
@@ -124,7 +122,7 @@ model.fit_generator(
     verbose=1,
     callbacks=[csv_logger, checkpointer, tensorboard])
 
-model.save_weights('./output/mobilenet_1_0_224_fine_tuned_60_epochs.h5')
+model.save_weights('./output/mobilenet_1_0_224_fine_tuned_90_epochs.h5')
 
 # serialize model to JSON
 model_json = model.to_json()
